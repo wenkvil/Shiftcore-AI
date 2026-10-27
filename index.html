@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SHIFTCORE AI — Industrial Intelligence Demo</title>
+<style>
+:root {
+  --site-primary: #1769E0;
+  --site-on-primary: #FFFFFF;
+  --site-secondary: #142235;
+  --site-on-secondary: #FFFFFF;
+  --site-background: #F3F6FA;
+  --site-on-background: #142235;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  --surface: light-dark(#FFFFFF, #172333);
+  --surface-2: light-dark(#F7F9FC, #1C2B3D);
+  --text: light-dark(#152235, #EDF4FC);
+  --muted: light-dark(#64748B, #A4B3C5);
+  --line: light-dark(#E0E7F0, #304155);
+  --blue-soft: light-dark(#EAF2FF, #17345B);
+  --green: #169B72;
+  --amber: #D58A1D;
+  --red: #D64A4A;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); color: var(--text); background: var(--site-background); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+.app-root { min-height: 100vh; width: 100%; background-color: var(--site-background); border-radius: 0; overflow: hidden; position: relative; }
+.topbar { height: 72px; display:flex; align-items:center; justify-content:space-between; padding: 0 34px; background: var(--surface); border-bottom:1px solid var(--line); gap:20px; }
+.brand { display:flex; align-items:center; gap:12px; min-width:0; }
+.logo { width:38px;height:38px;border-radius:12px;background:var(--site-primary);display:grid;place-items:center;color:white;font-weight:900;font-size:19px;box-shadow:0 8px 18px #1769e02a; }
+.brand-name { font-weight:850; letter-spacing:.08em; font-size:15px; white-space:nowrap; }
+.brand-sub { color:var(--muted); font-size:11px; margin-top:3px; letter-spacing:.08em; }
+.top-right { display:flex; align-items:center; gap:12px; }
+.demo-pill { display:flex; align-items:center; gap:8px; border:1px solid #D5E8E1; background:#ECF9F3; color:#187853; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; white-space:nowrap; }
+.dot { width:7px;height:7px;border-radius:50%;background:#169B72; }
+.icon-btn { border:1px solid var(--line); color:var(--text); background:var(--surface); width:38px;height:38px;border-radius:11px; display:grid;place-items:center; }
+.layout { display:grid; grid-template-columns:230px minmax(0,1fr); min-height:calc(100vh - 72px); }
+.sidebar { padding:24px 15px; background:var(--surface); border-right:1px solid var(--line); }
+.workspace-label { color:var(--muted); font-size:10px; letter-spacing:.15em; font-weight:800; padding:0 12px; margin:3px 0 12px; }
+.nav { display:flex; flex-direction:column; gap:5px; }
+.nav-btn { width:100%; border:0; background:transparent; color:var(--muted); display:flex; align-items:center; gap:12px; text-align:left; padding:12px; border-radius:11px; font-size:13px; font-weight:650; }
+.nav-btn.active { background:var(--blue-soft); color:var(--site-primary); }
+.nav-btn svg { width:18px;height:18px; flex-shrink:0; }
+.sidebar-card { margin:35px 4px 0; padding:15px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); }
+.sidebar-card .mini-label { font-size:10px; color:var(--muted); letter-spacing:.1em; font-weight:800; }
+.sidebar-card strong { display:block; font-size:13px; margin:9px 0 6px; }
+.sidebar-card p { margin:0; color:var(--muted); font-size:11px; line-height:1.55; }
+.main { padding:30px 34px 40px; min-width:0; max-width:1600px; width:100%; margin:0 auto; }
+.page-head { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:24px; }
+.eyebrow { color:var(--site-primary); font-size:10px; font-weight:850; letter-spacing:.16em; margin-bottom:9px; }
+h1 { font-family:var(--site-font-heading); font-size:calc(30px * var(--site-heading-scale)); line-height:1.1; letter-spacing:-.04em; margin:0; font-weight:850; }
+.page-desc { color:var(--muted); font-size:13px; margin-top:10px; line-height:1.5; }
+.date-chip { display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--surface); padding:10px 13px; border-radius:11px; color:var(--muted); font-size:12px; white-space:nowrap; }
+.btn-primary { display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;background:var(--site-primary);color:white;padding:11px 15px;font-size:12px;font-weight:750;box-shadow:0 5px 12px #1769e020; }
+.stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+.stat-card,.panel { background:var(--surface); border:1px solid var(--line); border-radius:16px; }
+.stat-card { padding:17px 18px; min-width:0; }
+.stat-top { display:flex; align-items:center; justify-content:space-between; gap:10px; color:var(--muted); font-size:11px; font-weight:650; }
+.stat-icon { width:31px;height:31px;border-radius:9px;background:var(--blue-soft);color:var(--site-primary);display:grid;place-items:center;flex-shrink:0; }
+.stat-icon svg { width:16px;height:16px; }
+.stat-value { font-size:29px; font-weight:850; letter-spacing:-.05em; margin:12px 0 6px; }
+.stat-foot { font-size:10px; color:var(--muted); }
+.stat-foot .good { color:var(--green); font-weight:800; }
+.content-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(300px,.85fr); gap:16px; align-items:start; }
+.panel { padding:20px; min-width:0; }
+.panel-head { display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:17px; }
+.panel-title { font-size:14px; font-weight:800; letter-spacing:-.02em; }
+.panel-sub { font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45; }
+.link-btn { border:0;background:transparent;color:var(--site-primary);font-size:11px;font-weight:750;padding:4px;white-space:nowrap; }
+.search-box { display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); padding:11px 12px; margin-bottom:13px; }
+.search-box svg { width:17px;height:17px;color:var(--muted);flex-shrink:0; }
+.search-box input { border:0;outline:0;background:transparent;color:var(--text);width:100%;font-size:12px;min-width:0; }
+.search-box input::placeholder { color:var(--muted); }
+.search-hint { color:var(--muted);font-size:10px;line-height:1.5;margin:0 0 16px; }
+.incident-list { display:flex;flex-direction:column;gap:9px; }
+.incident { border:1px solid var(--line);border-radius:12px;padding:13px;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s,background .15s; }
+.incident:hover { border-color:#8AB7F9; background:var(--surface-2); }
+.incident-mark { width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:light-dark(#FFF2E4,#3D3021);color:var(--amber);flex-shrink:0; }
+.incident-mark svg { width:17px;height:17px; }
+.incident-main { min-width:0;flex:1; }
+.incident-title { font-size:12px;font-weight:800;line-height:1.4; }
+.incident-meta { font-size:10px;color:var(--muted);margin-top:5px;line-height:1.45; }
+.tag { font-size:9px;font-weight:800;letter-spacing:.02em;border-radius:6px;padding:5px 7px;white-space:nowrap; }
+.tag.high { background:light-dark(#FFF0F0,#42282B);color:var(--red); }
+.tag.medium { background:light-dark(#FFF6E7,#41331E);color:var(--amber); }
+.tag.done { background:light-dark(#E8F8F0,#183B32);color:var(--green); }
+.ai-card { background:var(--site-secondary); color:var(--site-on-secondary); border-radius:15px; padding:18px; position:relative; overflow:hidden; }
+.ai-card:after { content:"";position:absolute;width:170px;height:170px;border:1px solid #6FA8FF30;border-radius:50%;right:-78px;top:-78px;box-shadow:0 0 0 24px #6FA8FF0A,0 0 0 48px #6FA8FF07;pointer-events:none; }
+.ai-kicker { display:flex;align-items:center;gap:8px;color:#8DBBFF;font-size:10px;font-weight:850;letter-spacing:.12em;position:relative;z-index:1; }
+.ai-kicker svg { width:16px;height:16px; }
+.ai-card h2 { font-size:20px;letter-spacing:-.04em;line-height:1.2;margin:15px 0 8px;position:relative;z-index:1; }
+.ai-card p { font-size:11px;line-height:1.6;color:#BDCADB;margin:0 0 15px;position:relative;z-index:1; }
+.ai-form { display:flex;gap:8px;position:relative;z-index:1; }
+.ai-form input { min-width:0;flex:1;border:1px solid #52637A;background:#23364C;color:white;border-radius:9px;padding:11px;font-size:11px;outline:none; }
+.ai-form input::placeholder { color:#A0B0C5; }
+.ai-form button { border:0;background:#4388F5;color:white;border-radius:9px;padding:0 12px;font-size:11px;font-weight:800; }
+.ai-result { display:none; margin-top:13px; border:1px solid #405670;background:#1C2E43;border-radius:10px;padding:12px;position:relative;z-index:1; }
+.ai-result.show { display:block; }
+.ai-result-title { color:#8DBBFF;font-size:10px;font-weight:850;letter-spacing:.08em;margin-bottom:7px; }
+.ai-result p { margin:0;color:#E0E9F4;font-size:11px; }
+.knowledge-list { margin-top:16px; }
+.knowledge-item { display:flex;gap:11px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line); }
+.knowledge-item:last-child { border-bottom:0;padding-bottom:0; }
+.doc-icon { width:34px;height:34px;border:1px solid var(--line);background:var(--surface-2);border-radius:9px;display:grid;place-items:center;color:var(--muted);flex-shrink:0; }
+.doc-icon svg { width:16px;height:16px; }
+.doc-info { min-width:0;flex:1; }
+.doc-title { font-size:11px;font-weight:750;line-height:1.4; }
+.doc-meta { font-size:10px;color:var(--muted);margin-top:4px; }
+.doc-status { color:var(--green);font-size:10px;font-weight:800; }
+.bottom-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px; }
+.handover { display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line); }
+.handover:last-child { border-bottom:0;padding-bottom:0; }
+.handover-time { font-size:10px;color:var(--muted);width:44px;flex-shrink:0;padding-top:2px; }
+.handover-body { flex:1;min-width:0; }
+.handover-title { font-size:11px;font-weight:800;line-height:1.4; }
+.handover-desc { color:var(--muted);font-size:10px;line-height:1.5;margin-top:4px; }
+.status-dot { width:7px;height:7px;display:inline-block;border-radius:50%;background:var(--green);margin-right:5px; }
+.workflow { display:grid;grid-template-columns:repeat(3,1fr);gap:9px; }
+.step { background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:12px; }
+.step-num { color:var(--site-primary);font-size:10px;font-weight:900;letter-spacing:.1em; }
+.step-title { font-size:11px;font-weight:800;margin:8px 0 5px; }
+.step-desc { color:var(--muted);font-size:10px;line-height:1.45; }
+.page { display:none; }
+.page.active { display:block; }
+.alt-panel { background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px; }
+.alt-panel h2 { margin:0 0 8px;font-size:21px;letter-spacing:-.04em; }
+.alt-panel > p { color:var(--muted);font-size:13px;line-height:1.6;max-width:720px; }
+.alt-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:20px; }
+.alt-card { border:1px solid var(--line);background:var(--surface-2);border-radius:13px;padding:17px; }
+.alt-card .num { font-size:23px;font-weight:850;color:var(--site-primary);letter-spacing:-.05em; }
+.alt-card h3 { font-size:12px;margin:10px 0 6px; }
+.alt-card p { color:var(--muted);font-size:11px;line-height:1.55;margin:0; }
+.timeline-row { display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line);font-size:12px; }
+.timeline-row:last-child { border-bottom:0; }
+.timeline-row .time { color:var(--muted);font-size:11px; }
+.timeline-row .title { font-weight:750; }
+.small-note { color:var(--muted);font-size:10px;line-height:1.55;margin-top:14px; }
+.footer { text-align:center;color:var(--muted);font-size:10px;margin-top:22px; }
+.toast { position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);background:#142235;color:white;padding:12px 16px;border-radius:11px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 12px 35px #0002;z-index:20; }
+.toast.show { opacity:1;transform:translate(-50%,0); }
+@media (max-width:1050px) { .layout{grid-template-columns:76px minmax(0,1fr)}.sidebar{padding:22px 10px}.workspace-label,.nav-btn span,.sidebar-card{display:none}.nav-btn{justify-content:center;padding:13px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.main{padding:25px 22px}.content-grid{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr} }
+@media (max-width:650px) { .topbar{height:64px;padding:0 15px}.brand-name{font-size:12px}.brand-sub{font-size:9px}.logo{width:34px;height:34px}.demo-pill{font-size:10px;padding:7px 9px}.layout{display:block;min-height:calc(100vh - 64px)}.sidebar{position:sticky;top:0;z-index:5;border-right:0;border-bottom:1px solid var(--line);padding:7px 10px;overflow:auto}.nav{flex-direction:row;min-width:max-content}.nav-btn{width:auto;padding:9px 12px;font-size:11px}.nav-btn span{display:inline}.nav-btn svg{width:15px;height:15px}.main{padding:22px 14px 32px}.page-head{display:block}.page-head .date-chip{display:inline-flex;margin-top:15px}h1{font-size:27px}.stats{gap:9px}.stat-card{padding:13px}.stat-value{font-size:25px}.stat-top{font-size:10px}.panel{padding:15px}.incident{padding:11px}.incident .tag{display:none}.alt-grid{grid-template-columns:1fr}.workflow{grid-template-columns:1fr}.timeline-row{grid-template-columns:55px 1fr}.timeline-row .tag{grid-column:2;justify-self:start}.bottom-grid{gap:12px} }
+</style>
+</head>
+<body>
+<div class="app-root" data-sites-preview-theme>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div><div class="brand-name">SHIFTCORE AI</div><div class="brand-sub">INDUSTRIAL KNOWLEDGE PLATFORM</div></div>
+    </div>
+    <div class="top-right"><div class="demo-pill"><span class="dot"></span> DEMO-СРЕДА</div><button class="icon-btn" id="themeBtn" title="Переключить тему" aria-label="Переключить тему">◐</button></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="workspace-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <nav class="nav" aria-label="Основная навигация">
+        <button class="nav-btn active" data-page="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg><span>Обзор</span></button>
+        <button class="nav-btn" data-page="incidents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5m0 3h.01"/></svg><span>Неисправности</span></button>
+        <button class="nav-btn" data-page="knowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M4 17a2 2 0 0 1 2-2h14M8 7h8m-8 4h6"/></svg><span>База знаний</span></button>
+        <button class="nav-btn" data-page="handover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3"/></svg><span>Передача смены</span></button>
+      </nav>
+      <div class="sidebar-card"><div class="mini-label">ДЕМО-ПРЕДПРИЯТИЕ</div><strong>Central Mining Plant</strong><p>Учебный набор данных для демонстрации сценариев платформы. Не подключён к реальному оборудованию.</p></div>
+    </aside>
+    <main class="main">
+      <section class="page active" id="page-overview">
+        <div class="page-head"><div><div class="eyebrow">ПРОМЫШЛЕННАЯ АНАЛИТИКА / ОБЗОР</div><h1>Операционная сводка</h1><div class="page-desc">Соберите историю оборудования, неисправностей и смен в единую картину.</div></div><div class="date-chip">◷ &nbsp; Демонстрационные данные · 27 окт. 2026</div></div>
+        <div class="stats">
+          <div class="stat-card"><div class="stat-top">Активы под наблюдением <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V9l8-5 8 5v11H4Z"/><path d="M9 20v-6h6v6M8 10h.01M16 10h.01"/></svg></span></div><div class="stat-value">128</div><div class="stat-foot">Оборудование и узлы · демо</div></div>
+          <div class="stat-card"><div class="stat-top">Открытые инциденты <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5m0 3h.01"/></svg></span></div><div class="stat-value">07</div><div class="stat-foot"><span class="good">3 высокого приоритета</span></div></div>
+          <div class="stat-card"><div class="stat-top">Записи базы знаний <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M8 7h8m-8 4h6"/></svg></span></div><div class="stat-value">2 486</div><div class="stat-foot">Инструкции, отчёты, смены · демо</div></div>
+          <div class="stat-card"><div class="stat-top">Передачи смен <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div class="stat-value">24</div><div class="stat-foot">Сводки за последние 7 дней · демо</div></div>
+        </div>
+        <div class="content-grid">
+          <section class="panel">
+            <div class="panel-head"><div><div class="panel-title">Поиск по истории неисправностей</div><div class="panel-sub">Найдите похожий случай, ремонт или техническую инструкцию.</div></div><button class="link-btn" data-goto="incidents">Все инциденты ↗</button></div>
+            <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="incidentSearch" type="search" placeholder="Например: перегрев подшипника конвейера…" aria-label="Поиск неисправностей"/><button class="link-btn" id="clearSearch">Очистить</button></div>
+            <p class="search-hint">Попробуйте: «вибрация», «насос», «температура». Результаты ниже — демонстрационные примеры.</p>
+            <div class="incident-list" id="incidentList">
+              <article class="incident" data-search="вибрация подшипник конвейер приводной узел"><div class="incident-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h3l2-7 4 14 3-10 2 3h4"/></svg></div><div class="incident-main"><div class="incident-title">Повышенная вибрация приводного узла конвейера</div><div class="incident-meta">INC-0248 · Механический участок · похожий случай: INC-0191</div></div><span class="tag high">Высокий</span></article>
+              <article class="incident" data-search="температура перегрев подшипник насос смазка"><div class="incident-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 14.8V5a3 3 0 0 0-6 0v9.8a5 5 0 1 0 6 0Z"/><path d="M11 8v9"/></svg></div><div class="incident-main"><div class="incident-title">Рост температуры подшипникового узла насоса</div><div class="incident-meta">INC-0241 · Насосная станция · инструкция: INS-MECH-08</div></div><span class="tag medium">Средний</span></article>
+              <article class="incident" data-search="давление гидравлика фильтр снижение"><div class="incident-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 12 17 8m-5 4-2-5"/></svg></div><div class="incident-main"><div class="incident-title">Снижение давления в гидравлическом контуре</div><div class="incident-meta">INC-0237 · Участок дробления · отчёт о ремонте: REP-0882</div></div><span class="tag done">Закрыт</span></article>
+            </div>
+            <div id="noResults" class="small-note" style="display:none">В демо-наборе совпадений не найдено. Попробуйте другое ключевое слово.</div>
+          </section>
+          <section>
+            <div class="ai-card">
+              <div class="ai-kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z"/><path d="m19 16 .8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></svg> SHIFTCORE INTELLIGENCE</div>
+              <h2>Спросите промышленную базу знаний</h2><p>Введите вопрос — демо покажет пример того, как платформа может структурировать ответ из истории инцидентов и документации.</p>
+              <form class="ai-form" id="aiForm"><input id="aiQuestion" placeholder="Почему растёт вибрация?" aria-label="Вопрос базе знаний"/><button type="submit">Найти ответ ↗</button></form>
+              <div class="ai-result" id="aiResult"><div class="ai-result-title">ПРИМЕР ОТВЕТА · ДЕМО</div><p id="aiResultText"></p></div>
+            </div>
+            <div class="panel knowledge-list">
+              <div class="panel-head"><div><div class="panel-title">Связанные материалы</div><div class="panel-sub">Примеры источников для диагностики.</div></div><button class="link-btn" data-goto="knowledge">Открыть ↗</button></div>
+              <div class="knowledge-item"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6m-6 4h6"/></svg></div><div class="doc-info"><div class="doc-title">Инструкция по диагностике подшипников</div><div class="doc-meta">INS-MECH-08 · Техническая инструкция</div></div><span class="doc-status">Демо</span></div>
+              <div class="knowledge-item"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v15H4zM8 9h8m-8 4h8m-8 4h5"/><path d="M8 3v4m8-4v4"/></svg></div><div class="doc-info"><div class="doc-title">Отчёт о ремонте приводного узла</div><div class="doc-meta">REP-0882 · Архив ремонтов</div></div><span class="doc-status">Демо</span></div>
+              <div class="knowledge-item"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4zM8 8h8m-8 4h8m-8 4h4"/></svg></div><div class="doc-info"><div class="doc-title">Журнал передачи смены № 184</div><div class="doc-meta">SHIFT-184 · Операционная запись</div></div><span class="doc-status">Демо</span></div>
+            </div>
+          </section>
+        </div>
+        <div class="bottom-grid">
+          <section class="panel"><div class="panel-head"><div><div class="panel-title">Последняя передача смены</div><div class="panel-sub">Пример структурированной сводки для следующей команды.</div></div><button class="link-btn" data-goto="handover">Подробнее ↗</button></div>
+            <div class="handover"><div class="handover-time">06:40</div><div class="handover-body"><div class="handover-title">Конвейер CV-04 — наблюдать вибрацию</div><div class="handover-desc">Показатели требуют повторной проверки при следующем обходе.</div></div><span class="tag medium">Контроль</span></div>
+            <div class="handover"><div class="handover-time">07:05</div><div class="handover-body"><div class="handover-title">Насос P-12 — завершена проверка</div><div class="handover-desc">Результаты измерений внесены в журнал смены.</div></div><span class="tag done">Записано</span></div>
+          </section>
+          <section class="panel"><div class="panel-head"><div><div class="panel-title">Логика платформы</div><div class="panel-sub">От разрозненных источников к рабочему контексту.</div></div></div>
+            <div class="workflow"><div class="step"><div class="step-num">01 / INPUT</div><div class="step-title">Источники</div><div class="step-desc">Журналы, документы, история ремонтов, данные оборудования.</div></div><div class="step"><div class="step-num">02 / CONTEXT</div><div class="step-title">Контекст</div><div class="step-desc">Связываем инциденты с инструкциями и предыдущими случаями.</div></div><div class="step"><div class="step-num">03 / ACTION</div><div class="step-title">Ответ</div><div class="step-desc">Инженер быстрее находит релевантную информацию.</div></div></div>
+          </section>
+        </div>
+        <div class="footer">SHIFTCORE AI · Концептуальный прототип · Все данные и результаты на этой странице демонстрационные</div>
+      </section>
+      <section class="page" id="page-incidents">
+        <div class="page-head"><div><div class="eyebrow">ОПЕРАЦИОННЫЕ СОБЫТИЯ</div><h1>Неисправности и инциденты</h1><div class="page-desc">Демонстрационный реестр событий с привязкой к похожим случаям и документации.</div></div><button class="btn-primary" id="showIncidentToast">＋ Создать запись</button></div>
+        <div class="alt-panel"><h2>История инцидентов</h2><p>В реальном внедрении записи могут поступать из журналов смен, CMMS/EAM и других согласованных источников. Здесь представлены вымышленные данные для показа сценария.</p>
+          <div class="timeline-row"><div class="time">27 окт · 08:42</div><div><div class="title">Повышенная вибрация приводного узла конвейера</div><div class="panel-sub">CV-04 · Найден похожий случай INC-0191</div></div><span class="tag high">Высокий</span></div>
+          <div class="timeline-row"><div class="time">27 окт · 07:15</div><div><div class="title">Рост температуры подшипникового узла насоса</div><div class="panel-sub">P-12 · Связана инструкция INS-MECH-08</div></div><span class="tag medium">Средний</span></div>
+          <div class="timeline-row"><div class="time">26 окт · 22:30</div><div><div class="title">Снижение давления в гидравлическом контуре</div><div class="panel-sub">HY-03 · Отчёт REP-0882</div></div><span class="tag done">Закрыт</span></div>
+          <div class="timeline-row"><div class="time">26 окт · 16:05</div><div><div class="title">Повторное предупреждение датчика температуры</div><div class="panel-sub">MTR-07 · Требуется проверка журнала предыдущей смены</div></div><span class="tag medium">Средний</span></div>
+        </div><div class="small-note">Прототип не подключён к реальному оборудованию, не выполняет автоматическую диагностику и не выдаёт эксплуатационных команд.</div>
+      </section>
+      <section class="page" id="page-knowledge">
+        <div class="page-head"><div><div class="eyebrow">ЕДИНАЯ БАЗА ЗНАНИЙ</div><h1>Документы и опыт предприятия</h1><div class="page-desc">Пример того, как технические инструкции, ремонтные отчёты и записи смен могут быть связаны между собой.</div></div></div>
+        <div class="alt-panel"><h2>Источники знаний</h2><p>SHIFTCORE AI задуман как дополнительный интеллектуальный слой поверх существующих систем, а не как замена SCADA или CMMS.</p>
+          <div class="alt-grid"><div class="alt-card"><div class="num">01</div><h3>Техническая документация</h3><p>Инструкции, регламенты, руководства по обслуживанию и процедуры безопасности.</p></div><div class="alt-card"><div class="num">02</div><h3>История ремонтов</h3><p>Описание неисправностей, выполненные работы, заменённые узлы и результаты проверки.</p></div><div class="alt-card"><div class="num">03</div><h3>Журналы смен</h3><p>Наблюдения операторов, незавершённые задачи и важные замечания для следующей смены.</p></div></div>
+          <div class="knowledge-list"><div class="knowledge-item"><div class="doc-icon">▤</div><div class="doc-info"><div class="doc-title">INS-MECH-08 · Диагностика подшипников</div><div class="doc-meta">Техническая инструкция · пример</div></div><span class="tag done">Индексирован</span></div><div class="knowledge-item"><div class="doc-icon">▤</div><div class="doc-info"><div class="doc-title">REP-0882 · Ремонт приводного узла</div><div class="doc-meta">Отчёт о ремонте · пример</div></div><span class="tag done">Индексирован</span></div><div class="knowledge-item"><div class="doc-icon">▤</div><div class="doc-info"><div class="doc-title">SHIFT-184 · Передача смены</div><div class="doc-meta">Журнал смены · пример</div></div><span class="tag done">Индексирован</span></div></div>
+        </div>
+      </section>
+      <section class="page" id="page-handover">
+        <div class="page-head"><div><div class="eyebrow">НЕПРЕРЫВНОСТЬ ОПЕРАЦИЙ</div><h1>Передача смены</h1><div class="page-desc">Сводка ключевых событий, открытых задач и наблюдений, которые важно передать следующей команде.</div></div><button class="btn-primary" id="copyHandover">Копировать сводку</button></div>
+        <div class="alt-panel"><h2>Смена B → Смена C</h2><p>Демонстрационная сводка за 27 октября. В реальной системе она формируется на основе доступных журналов и подтверждается ответственным сотрудником.</p>
+          <div class="timeline-row"><div class="time">В работе</div><div><div class="title">CV-04 · Проверить повторно уровень вибрации</div><div class="panel-sub">Предыдущая смена отметила отклонение. Сопоставить с историей инцидента INC-0191.</div></div><span class="tag high">Приоритет</span></div>
+          <div class="timeline-row"><div class="time">Контроль</div><div><div class="title">P-12 · Сверить температуру после запуска</div><div class="panel-sub">Сохранить показания в журнале и сравнить с предыдущим наблюдением.</div></div><span class="tag medium">Наблюдение</span></div>
+          <div class="timeline-row"><div class="time">Завершено</div><div><div class="title">HY-03 · Запись о проверке давления внесена</div><div class="panel-sub">Отчёт REP-0882 доступен в демонстрационной базе знаний.</div></div><span class="tag done">Готово</span></div>
+          <div class="small-note">Важно: это иллюстративный сценарий, не реальные указания для эксплуатации оборудования. Любые действия на объекте определяются утверждёнными процедурами и ответственными специалистами.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const navButtons = [...document.querySelectorAll('.nav-btn')];
+function goToPage(name) {
+  document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === 'page-' + name));
+  navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === name));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+navButtons.forEach(button => button.addEventListener('click', () => goToPage(button.dataset.page)));
+document.querySelectorAll('[data-goto]').forEach(button => button.addEventListener('click', () => goToPage(button.dataset.goto)));
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+const searchInput = document.getElementById('incidentSearch');
+const incidentCards = [...document.querySelectorAll('#incidentList .incident')];
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim().toLowerCase();
+  let visible = 0;
+  incidentCards.forEach(card => {
+    const match = !query || (card.dataset.search + ' ' + card.innerText).toLowerCase().includes(query);
+    card.style.display = match ? 'flex' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('noResults').style.display = visible ? 'none' : 'block';
+});
+document.getElementById('clearSearch').addEventListener('click', () => { searchInput.value = ''; searchInput.dispatchEvent(new Event('input')); searchInput.focus(); });
+const aiForm = document.getElementById('aiForm');
+aiForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const question = document.getElementById('aiQuestion').value.trim();
+  if (!question) { showToast('Введите вопрос для демонстрации'); return; }
+  let answer;
+  const q = question.toLowerCase();
+  if (q.includes('вибрац') || q.includes('подшип')) answer = 'В демонстрационной базе найден похожий случай INC-0191 по приводному узлу. Связанные материалы: INS-MECH-08 (диагностика подшипников) и REP-0882 (отчёт о ремонте). Следующий шаг — проверить утверждённую инструкцию и сопоставить условия с текущим инцидентом.';
+  else if (q.includes('температур') || q.includes('перегрев') || q.includes('насос')) answer = 'Найдено связанное событие по насосу P-12 и инструкция INS-MECH-08. Для анализа доступны записи температуры, история обслуживания и комментарии смены. Это пример ответа: выводы необходимо сверять с фактическими данными и процедурами предприятия.';
+  else if (q.includes('смен') || q.includes('передач')) answer = 'В демонстрационной сводке отмечены три пункта: повторно проверить CV-04, сверить температуру P-12 после запуска и учесть запись по HY-03. Сводка предназначена для передачи контекста, а не для автоматического назначения работ.';
+  else answer = 'В демонстрационном наборе найдены общие источники: журналы смен, отчёты о ремонтах и технические инструкции. Для точного ответа в реальном внедрении понадобятся подключённые данные предприятия и подтверждение найденной информации ответственным специалистом.';
+  document.getElementById('aiResultText').textContent = answer;
+  document.getElementById('aiResult').classList.add('show');
+});
+document.getElementById('showIncidentToast').addEventListener('click', () => showToast('В демо создание записей отключено — показан сценарий интерфейса.'));
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const dark = document.documentElement.dataset.demoTheme !== 'dark';
+  document.documentElement.dataset.demoTheme = dark ? 'dark' : 'light';
+  const palette = dark ? {background:'#0F1926',surface:'#172333',surface2:'#1C2B3D',text:'#EDF4FC',muted:'#A4B3C5',line:'#304155',blueSoft:'#17345B'} : {background:'#F3F6FA',surface:'#FFFFFF',surface2:'#F7F9FC',text:'#152235',muted:'#64748B',line:'#E0E7F0',blueSoft:'#EAF2FF'};
+  const root = document.documentElement;
+  root.style.setProperty('--site-background', palette.background);
+  root.style.setProperty('--surface', palette.surface);
+  root.style.setProperty('--surface-2', palette.surface2);
+  root.style.setProperty('--text', palette.text);
+  root.style.setProperty('--muted', palette.muted);
+  root.style.setProperty('--line', palette.line);
+  root.style.setProperty('--blue-soft', palette.blueSoft);
+});
+document.getElementById('copyHandover').addEventListener('click', async () => {
+  const summary = 'SHIFTCORE AI — ДЕМО-СВОДКА ПЕРЕДАЧИ СМЕНЫ\n1. CV-04: повторно проверить уровень вибрации; сопоставить с INC-0191.\n2. P-12: сверить температуру после запуска и записать показания.\n3. HY-03: учесть запись проверки давления, отчёт REP-0882.\n\nДемонстрационные данные. Не являются эксплуатационными указаниями.';
+  try { await navigator.clipboard.writeText(summary); showToast('Сводка скопирована'); }
+  catch (error) { showToast('Выделите и скопируйте текст вручную'); }
+});
+</script>
+</body>
+</html>
